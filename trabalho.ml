@@ -256,10 +256,25 @@ let rec eval (renv:renv) (e:expr) : value =
         
   | LetRec _ -> raise BugParser 
                   
-                  (* extensões imperativas - trabalho*)
+(* Extensões do trabalho *) 
   | Skip -> VUnit
     
   | New e -> 
       let address = allocMemory () in
       addMemoryValue address(eval renv e);
       VMemoryAddress address
+
+
+(* principal do interpretador *)
+
+let int_bse (e:expr) : unit =
+  try
+    let t = typeinfer [] e in
+    let v = eval [] e
+    in  print_string ((vtos v) ^ " : " ^ (ttos t))
+  with
+    TypeError msg ->  print_string ("erro de tipo - " ^ msg)
+   
+ (* as exceções abaixo nao podem ocorrer   *)
+  | BugTypeInfer  ->  print_string "corrigir bug em typeinfer"
+  | BugParser     ->  print_string "corrigir bug no parser para let rec"
