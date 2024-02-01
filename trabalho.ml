@@ -179,11 +179,8 @@ let allocMemory () = memoryPointer := !memoryPointer + 1; !memoryPointer - 1
 let addMemoryValue address value =
   memory.(address) <- value
     
-let viewMemory (i : int): string =
-  let v = memory.(i) in
-  match v with
-    VUnit -> ""
-  | _ -> (vtos v) 
+let getMemory (i : int): value =
+  memory.(i)
  
 (*++++++++++++++++++++++++++++++++++++++++++*)
 (*                 AVALIADOR                *)
@@ -261,8 +258,14 @@ let rec eval (renv:renv) (e:expr) : value =
     
   | New e -> 
       let address = allocMemory () in
-      addMemoryValue address(eval renv e);
+      addMemoryValue address (eval renv e);
       VMemoryAddress address
+  | Dref e -> 
+      let address = eval renv e in
+      (match address with
+         VMemoryAddress adr -> 
+           getMemory adr
+       | _ -> raise BugTypeInfer )
 
 
 (* principal do interpretador *)
