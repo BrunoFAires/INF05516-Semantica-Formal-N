@@ -82,7 +82,7 @@ exception BugTypeInfer
 
 (* Exceções para usuário *)
 exception TypeError of string 
-exception SegFault of string
+
 
 (*++++++++++++++++++++++++++++++++++++++++++*)
 (*         		    TYPEINFER               *)
