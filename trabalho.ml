@@ -266,6 +266,13 @@ let rec eval (renv:renv) (e:expr) : value =
          VMemoryAddress adr -> 
            getMemory adr
        | _ -> raise BugTypeInfer )
+  | Whl(e1,e2) ->  
+      let c = eval renv e1  in
+      (match c with
+         VBool true  -> eval renv (Seq(e2, Whl(e1,e2)))
+       | VBool false -> VUnit
+       | _ -> raise BugTypeInfer)
+        
 
 
 (* principal do interpretador *)
