@@ -249,6 +249,8 @@ let rec eval (renv:renv) (e:expr) : value =
   | LetRec(f,TyFn(t1,t2),Fn(x,tx,e1), e2) when t1 = tx ->
       let renv'= update renv f (VRclos(f,x,e1,renv))
       in eval renv' e2
+      
+  | LetRec _ -> raise BugParser
                   
 (* Extensões do trabalho *) 
   | Skip -> VUnit
@@ -280,9 +282,9 @@ let rec eval (renv:renv) (e:expr) : value =
           update address v;
           VUnit
         | _ -> raise BugTypeInfer)
-  
-  | LetRec _ -> raise BugParser
 
+  | _ -> raise BugParser
+  
 (* principal do interpretador *)
 
 let int_bse (e:expr) : unit =
