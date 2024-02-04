@@ -46,6 +46,7 @@ type value =
   | VRclos of ident * ident * expr * renv 
   | VMemoryAddress of int 
   | VUnit
+  |Skip
 and renv = (ident * value) list 
 
 (* Busca e atualização nos ambientes (polimórficas) *)
@@ -142,7 +143,6 @@ let rec typeinfer (tenv:tenv) (e:expr) : tipo =
       TyRef t
   | Asg(e1,e2) -> 
       let t1 = typeinfer tenv e1 in
-      let t2 = typeinfer tenv e2 in
       (match t1 with
          TyRef t2 -> TyUnit
        | _ -> raise (TypeError ("O tipo da segunda expressão não é o mesmo da primeira.")))
@@ -279,11 +279,9 @@ let rec eval (renv:renv) (e:expr) : value =
       let v1 = eval renv e2 in
       (match x with
         VMemoryAddress address ->
-          update address v;
-          VUnit
+          addMemoryValue address v1;
+          Skip
         | _ -> raise BugTypeInfer)
-
-  | _ -> raise BugParser
   
 (* principal do interpretador *)
 
