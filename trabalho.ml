@@ -272,7 +272,9 @@ let rec eval (renv:renv) (e:expr) : value =
          VBool true  -> eval renv (Seq(e2, Whl(e1,e2)))
        | VBool false -> VUnit
        | _ -> raise BugTypeInfer)
-        
+  | Seq (e1, e2) ->
+      let _ = eval renv e1 in
+      eval renv e2
 
 
 (* principal do interpretador *)
