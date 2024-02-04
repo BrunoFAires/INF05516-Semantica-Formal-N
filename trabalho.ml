@@ -249,9 +249,6 @@ let rec eval (renv:renv) (e:expr) : value =
   | LetRec(f,TyFn(t1,t2),Fn(x,tx,e1), e2) when t1 = tx ->
       let renv'= update renv f (VRclos(f,x,e1,renv))
       in eval renv' e2
-        
-        
-  | LetRec _ -> raise BugParser 
                   
 (* Extensões do trabalho *) 
   | Skip -> VUnit
@@ -275,7 +272,16 @@ let rec eval (renv:renv) (e:expr) : value =
   | Seq (e1, e2) ->
       let _ = eval renv e1 in
       eval renv e2
-
+  | Asg (e1, e2) ->
+      let x = eval renv e1 in
+      let v1 = eval renv e2 in
+      (match x with
+        VMemoryAddress address ->
+          update address v;
+          VUnit
+        | _ -> raise BugTypeInfer)
+  
+  | LetRec _ -> raise BugParser
 
 (* principal do interpretador *)
 
